@@ -2,7 +2,9 @@
     import { base } from '$app/paths';
 
     import * as Plot from '@observablehq/plot';
-    import { MapLibre, GeoJSON, MarkerLayer, Marker, Popup } from 'svelte-maplibre';
+    import { MapLibre, DeckGlLayer, MarkerLayer, Marker, Popup } from 'svelte-maplibre';
+    import { GeoJsonLayer } from '@deck.gl/layers';
+    import { HexagonLayer } from '@deck.gl/aggregation-layers';
     import { tableFromIPC } from "apache-arrow";
     import Icon from "@iconify/svelte";
     import Toggle from '$lib/components/Toggle.svelte';
@@ -13,14 +15,40 @@
 
     let layers = $state([
         { name: 'Weather Stations', isOn: true, },
-        { name: 'Another Layer', isOn: false, },
-        { name: 'Yet Another Layer', isOn: false, },
+        { name: 'Population Density', isOn: false, },
+        { name: 'Regional Planning Districts', isOn: false, },
     ]);
 
     let selectedStationIndex = $state();
 
     let plotDiv = $state();
     let plotData = $state();
+
+    let populationData = $state();
+    let regionalPlanningDistrictsData = $state();
+
+    $effect(() => {
+        if (!populationData) {
+            tableFromIPC(fetch(
+                `${base}/data/maryland_population_1km.arrow`
+            )).then((table) => table.toArray().map((item) => {
+                const d = item.toJSON();
+                return d;
+            })).then(d => {
+                populationData = d;
+            }).catch(() => {}).finally(() => {});
+        }
+    });
+
+    $effect(() => {
+        if (!regionalPlanningDistrictsData) {
+            fetch(
+                `${base}/data/Baltimore_2020_Regional_Planning_Districts.geojson`
+            ).then(d => d.json()).then(d => {
+                regionalPlanningDistrictsData = d;
+            }).catch(() => {}).finally(() => {});
+        }
+    });
 
     $effect(() => {
         if (selectedStationIndex !== undefined) {
@@ -145,6 +173,37 @@
                         </Popup>
                     </Marker>
                 {/each}
+            {/if}
+            {#if (regionalPlanningDistrictsData && layers[2].isOn)}
+                <DeckGlLayer
+                    type={GeoJsonLayer}
+                    data={regionalPlanningDistrictsData}
+                    stroked={true}
+                    filled={true}
+                    getFillColor={[1, 108, 89, 64]}
+                    getLineColor={[1, 108, 89, 192]}
+                    getLineWidth={25}
+                />
+            {/if}
+            {#if (populationData && layers[1].isOn)}
+                    <DeckGlLayer
+                        type={HexagonLayer}
+                        data={populationData}
+                        extruded={false}
+                        getPosition={d => [d.longitude, d.latitude]}
+                        getColorWeight={d => d.population}
+                        getElevationWeight={d => d.population}
+                        elevationScale={1}
+                        radius={1000}
+                        colorRange={[
+                            [242,240,247,  128],
+                            [218,218,235,  128],
+                            [188,189,220,  128],
+                            [158,154,200,  128],
+                            [117,107,177,  128],
+                            [84, 39, 143,  128],
+                        ]}
+                    />
             {/if}
         </MapLibre>
         

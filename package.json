@@ -11,7 +11,14 @@
 		"lint": "prettier --check ."
 	},
 	"devDependencies": {
+		"@deck.gl/aggregation-layers": "^9.0.38",
+		"@deck.gl/core": "^9.0.38",
+		"@deck.gl/layers": "^9.0.38",
+		"@deck.gl/mapbox": "^9.0.38",
 		"@iconify/svelte": "^4.2.0",
+		"@loaders.gl/arrow": "^4.3.3",
+		"@loaders.gl/core": "^4.3.3",
+		"@loaders.gl/csv": "^4.3.3",
 		"@observablehq/plot": "^0.6.16",
 		"@sveltejs/adapter-static": "^3.0.6",
 		"@sveltejs/enhanced-img": "^0.4.4",
