@@ -15,6 +15,7 @@
 
     let layers = $state([
         { name: 'Weather Stations', isOn: true, },
+        { name: 'Air Quality', isOn: false, },
         { name: 'Population Density', isOn: false, },
         { name: 'Regional Planning Districts', isOn: false, },
     ]);
@@ -127,7 +128,7 @@
             <h1
                 class="font-semibold text-2xl"
             >
-                BSEC Weather Station Dashboard
+                BSEC Data Dashboard
             </h1>
 
             <p
@@ -151,6 +152,37 @@
             standardControls
             style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
         >
+            {#if (regionalPlanningDistrictsData && layers[3].isOn)}
+                <DeckGlLayer
+                    type={GeoJsonLayer}
+                    data={regionalPlanningDistrictsData}
+                    stroked={true}
+                    filled={true}
+                    getFillColor={[1, 108, 89, 64]}
+                    getLineColor={[1, 108, 89, 192]}
+                    getLineWidth={25}
+                />
+            {/if}
+            {#if (populationData && layers[2].isOn)}
+                    <DeckGlLayer
+                        type={HexagonLayer}
+                        data={populationData}
+                        extruded={false}
+                        getPosition={d => [d.longitude, d.latitude]}
+                        getColorWeight={d => d.population}
+                        getElevationWeight={d => d.population}
+                        elevationScale={1}
+                        radius={1000}
+                        colorRange={[
+                            [242,240,247,  128],
+                            [218,218,235,  128],
+                            [188,189,220,  128],
+                            [158,154,200,  128],
+                            [117,107,177,  128],
+                            [84, 39, 143,  128],
+                        ]}
+                    />
+            {/if}
             {#if layers[0].isOn}
                 {#each stations.features as { properties, geometry }, i}
                     <Marker
@@ -173,37 +205,6 @@
                         </Popup>
                     </Marker>
                 {/each}
-            {/if}
-            {#if (regionalPlanningDistrictsData && layers[2].isOn)}
-                <DeckGlLayer
-                    type={GeoJsonLayer}
-                    data={regionalPlanningDistrictsData}
-                    stroked={true}
-                    filled={true}
-                    getFillColor={[1, 108, 89, 64]}
-                    getLineColor={[1, 108, 89, 192]}
-                    getLineWidth={25}
-                />
-            {/if}
-            {#if (populationData && layers[1].isOn)}
-                    <DeckGlLayer
-                        type={HexagonLayer}
-                        data={populationData}
-                        extruded={false}
-                        getPosition={d => [d.longitude, d.latitude]}
-                        getColorWeight={d => d.population}
-                        getElevationWeight={d => d.population}
-                        elevationScale={1}
-                        radius={1000}
-                        colorRange={[
-                            [242,240,247,  128],
-                            [218,218,235,  128],
-                            [188,189,220,  128],
-                            [158,154,200,  128],
-                            [117,107,177,  128],
-                            [84, 39, 143,  128],
-                        ]}
-                    />
             {/if}
         </MapLibre>
         
