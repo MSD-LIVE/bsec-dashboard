@@ -99,7 +99,7 @@
 
 
 <div
-    class="absolute top-0 left-0 w-full flex flex-row items-center justify-center px-4 py-2 bg-rose-700 rounded-b-sm shadow"
+    class="absolute top-0 left-0 w-full flex flex-row items-center justify-center px-4 py-2 bg-rose-700 rounded-b-sm shadow-sm"
 >
     <span
         class="text-sm text-white"
@@ -148,7 +148,7 @@
         <MapLibre 
             center={[-76.6, 39.3]}
             zoom={11}
-            class="flex-1 h-full shadow rounded-sm overflow-hidden"
+            class="flex-1 h-full shadow-sm rounded-xs overflow-hidden"
             standardControls
             style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
         >
@@ -209,7 +209,7 @@
         </MapLibre>
         
         <div
-            class="w-96 h-full flex flex-col items-center bg-gray-100 px-4 py-2 relative shadow rounded-sm"
+            class="w-96 h-full flex flex-col items-center bg-gray-100 px-4 py-2 relative shadow-sm rounded-xs"
         >
         
             <h2
@@ -260,7 +260,7 @@
     </div>
 
     <div
-        class="h-24 flex flex-row items-center justify-around bg-gray-100 px-4 py-2 relative shadow rounded-sm"
+        class="h-24 flex flex-row items-center justify-around bg-gray-100 px-4 py-2 relative shadow-sm rounded-xs"
     >
         
         <h2
