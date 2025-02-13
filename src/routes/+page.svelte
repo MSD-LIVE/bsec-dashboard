@@ -1,282 +1,239 @@
 <script>
-    import { base } from '$app/paths';
-
-    import * as Plot from '@observablehq/plot';
-    import { MapLibre, DeckGlLayer, MarkerLayer, Marker, Popup } from 'svelte-maplibre';
-    import { GeoJsonLayer } from '@deck.gl/layers';
-    import { HexagonLayer } from '@deck.gl/aggregation-layers';
-    import { tableFromIPC } from "apache-arrow";
     import Icon from "@iconify/svelte";
-    import Toggle from '$lib/components/Toggle.svelte';
+    import { base } from '$app/paths';
+    import bsecLogo from "$lib/img/bsec-logo.png";
+    import devDataRecords from "$lib/data/dev_only_records.json";
+    import DataDashboard from "$lib/components/Dashboard.svelte";
+        
+    const themeImages = import.meta.glob('$lib/img/bsecThemes/*.{jpg,jpeg,png}', {
+        query: { enhanced: true, w: '100' },
+        import: 'default',
+        eager: true
+    });
 
-    import stations from '$lib/data/transformed/station_locations.json';
+    const scienceThemes = [
+        { name: 'Vegetation, Soils, and Ecosystems', img: 'theme0.jpg', },
+        { name: 'Greenhouse Gases', img: 'theme1.jpg', },
+        // { name: 'Buildings and Energy', img: 'theme2.jpg', },
+        { name: 'Meteorology', img: 'theme3.jpg', },
+        { name: 'Water and Water Quality', img: 'theme6.jpg', },
+        // { name: 'Health', img: 'theme8.jpg', },
+        // { name: 'Air Quality', img: 'theme9.jpg', },
+    ];
 
-    let isFetching = $state(false);
+    let selectedThemes = $state([]);
 
-    let layers = $state([
-        { name: 'Weather Stations', isOn: true, },
-        { name: 'Air Quality', isOn: false, },
-        { name: 'Population Density', isOn: false, },
-        { name: 'Regional Planning Districts', isOn: false, },
-    ]);
-
-    let selectedStationIndex = $state();
-
-    let plotDiv = $state();
-    let plotData = $state();
-
-    let populationData = $state();
-    let regionalPlanningDistrictsData = $state();
+    let data = $state();
 
     $effect(() => {
-        if (!populationData) {
-            tableFromIPC(fetch(
-                `${base}/data/maryland_population_1km.arrow`
-            )).then((table) => table.toArray().map((item) => {
-                const d = item.toJSON();
-                return d;
-            })).then(d => {
-                populationData = d;
-            }).catch(() => {}).finally(() => {});
+        if (data === undefined) {
+            // TODO need to interact with the real API, but it is CORS protected
+            data = devDataRecords;
         }
     });
 
-    $effect(() => {
-        if (!regionalPlanningDistrictsData) {
-            fetch(
-                `${base}/data/Baltimore_2020_Regional_Planning_Districts.geojson`
-            ).then(d => d.json()).then(d => {
-                regionalPlanningDistrictsData = d;
-            }).catch(() => {}).finally(() => {});
-        }
-    });
-
-    $effect(() => {
-        if (selectedStationIndex !== undefined) {
-            const station = stations.features[selectedStationIndex];
-            const stationId = station.properties.station_id;
-            const stationType = station.properties.station_type;
-            const uri = `${base}/data/BSEC-${stationId}_${stationType}_daily_2024.arrow`;
-            isFetching = true;
-            tableFromIPC(fetch(uri)).then((table) => table.toArray().map((item) => {
-                const d = item.toJSON();
-                d.utc = new Date(d.obsTimeUtc + "Z");
-                return d;
-            })).then(d => {
-                plotData = d;
-            }).catch(() => {
-                plotData = undefined;
-                selectedStationIndex = undefined;
-            }).finally(() => {
-                isFetching = false;
-            });
-        }
-        else {
-            plotData = undefined;
-        }
-    });
-
-    $effect(() => {
-        if (plotDiv && plotData) {
-            const plot = Plot.plot({
-                width: 384,
-                height: 256,
-                x: {type: 'utc', label: 'Date'},
-                y: {label: 'Average Temperature', grid: true},
-                marks: [
-                    Plot.line(plotData, {
-                        x: 'utc',
-                        y: 'tempAvg',
-                    }),
-                ]
-            });
-            plotDiv.firstChild?.remove();
-            plotDiv.append(plot);
-        }
-    });
-
+    let filteredData = $derived(data?.hits?.hits?.filter(
+        d => selectedThemes.length===0 ? true : d?.metadata?.msdlive_themes?.some(t => selectedThemes.includes(t.theme))
+    ) ?? []);
+    
 </script>
 
-
 <div
-    class="absolute top-0 left-0 w-full flex flex-row items-center justify-center px-4 py-2 bg-rose-700 rounded-b-sm shadow-sm"
+    class="w-full flex flex-col gap-4 px-16 pb-4"
 >
-    <span
-        class="text-sm text-white"
-    >
-        This is just a DEMO, meant to help generate ideas on what you actually want!
-    </span>
-</div>
 
-<div
-    class="w-full h-full bg-white flex flex-col items-stretch justify-start gap-4 px-4 py-2 pt-8"
->
     <div
-        class="flex flex-row items-center justify-start gap-8"
+        class="
+            flex flex-row items-center gap-8
+        "
     >
-
-        <enhanced:img
-            alt=''
-            src='$lib/img/bsec-logo.png'
-            class='w-48 h-32 object-cover'
+        <img
+            alt="BSEC"
+            class="h-36 object-contain object-bottom"
+            src={bsecLogo}
         />
-
-        <div
-            class="flex-1 flex flex-col"
+        <h1
+            class="pt-8 text-3xl font-semibold"
         >
-
-            <h1
-                class="font-semibold text-2xl"
-            >
-                BSEC Data Dashboard
-            </h1>
-
-            <p
-                class="font-regular text-base"
-            >
-                Lorem ipsum dolor sit amet...
-            </p>
-
-        </div>
-
+            Baltimore Social-Environmental Collaborative
+        </h1>
     </div>
+    <p class="text-sm -mt-4">
+        The Baltimore Social-Environmental Collaborative (BSEC) is a Department of Energy Urban Integrated Field Lab program designed to generate the science needed for informed energy investments and extreme weather resilience in Baltimore. In doing so, BSEC contributes to action plans for Baltimore that improve the well-being of residents across the region. Working with businesses, local and state government representatives, and community organizations, BSEC scientists produce the decision-relevant science needed to address local priorities and needs. As data is gathered and findings discovered, the work evolves to answer questions our partners identify.
+    </p>
 
-    <div
-        class="flex-1 flex flex-row items-center justify-start gap-4"
-    >
-
-        <MapLibre 
-            center={[-76.6, 39.3]}
-            zoom={11}
-            class="flex-1 h-full shadow-sm rounded-xs overflow-hidden"
-            standardControls
-            style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-        >
-            {#if (regionalPlanningDistrictsData && layers[3].isOn)}
-                <DeckGlLayer
-                    type={GeoJsonLayer}
-                    data={regionalPlanningDistrictsData}
-                    stroked={true}
-                    filled={true}
-                    getFillColor={[1, 108, 89, 64]}
-                    getLineColor={[1, 108, 89, 192]}
-                    getLineWidth={25}
-                />
-            {/if}
-            {#if (populationData && layers[2].isOn)}
-                    <DeckGlLayer
-                        type={HexagonLayer}
-                        data={populationData}
-                        extruded={false}
-                        getPosition={d => [d.longitude, d.latitude]}
-                        getColorWeight={d => d.population}
-                        getElevationWeight={d => d.population}
-                        elevationScale={1}
-                        radius={1000}
-                        colorRange={[
-                            [242,240,247,  128],
-                            [218,218,235,  128],
-                            [188,189,220,  128],
-                            [158,154,200,  128],
-                            [117,107,177,  128],
-                            [84, 39, 143,  128],
-                        ]}
-                    />
-            {/if}
-            {#if layers[0].isOn}
-                {#each stations.features as { properties, geometry }, i}
-                    <Marker
-                        lngLat={geometry.coordinates}
-                        onclick={() => (selectedStationIndex = i)}
-                        class="cursor-pointer"
-                    >
-                        <Icon
-                            icon="octicon:feed-star-16"
-                            width="16" height="16"
-                            class="
-                                hover:scale-125 transition-transform 
-                                {properties.station_type==='AWS' ? 'text-[#9d27b0]' : (properties.station_type==='OTT' ? 'text-[#0f87d1]' : 'text-[#0a7138]')}
-                            "
-                        />
-                        <Popup openOn="hover" offset={[0, -10]}>
-                            <div class="text-base">
-                                {properties.site_name}
-                            </div>
-                        </Popup>
-                    </Marker>
-                {/each}
-            {/if}
-        </MapLibre>
-        
-        <div
-            class="w-96 h-full flex flex-col items-center bg-gray-100 px-4 py-2 relative shadow-sm rounded-xs"
-        >
-        
-            <h2
-                class="font-semibold text-sm text-gray-500 absolute left-4 top-2"
-            >
-                STATION DATA
-            </h2>
-
-            {#if selectedStationIndex===undefined}
-                <div class="w-full h-full flex flex-col items-center justify-center">
-                    <span class="text-sm text-gray-400 italic select-none">
-                        Select a station on the map
-                    </span>
-                </div>
-            {:else if isFetching}
-                <div class="w-full h-full flex flex-col items-center justify-center">
-                    <Icon
-                        icon="eos-icons:bubble-loading"
-                        class="text-bsec-yellow"
-                        width="64"
-                        height="64"
-                    />
-                </div>
-            {:else}
-                <button
-                    class="absolute right-4 top-2 text-red-600"
-                    onclick={() => {selectedStationIndex = undefined}}
-                >
-                    <Icon icon="mdi:close-box" width="24" height="24" />
-                </button>
-                <div
-                    class="w-full h-full flex flex-col items-stretch justify-start mt-8"
-                >
-                    <h3
-                        class="text-lg text-gray-700 my-2 text-center w-full"
-                    >
-                        {stations.features[selectedStationIndex].properties.site_name}
-                    </h3>
-                    <div
-                        bind:this={plotDiv}
-                        class="flex-1"
-                    ></div>
-                </div>
-            {/if}
-
-        </div>
-
-    </div>
-
-    <div
-        class="h-24 flex flex-row items-center justify-around bg-gray-100 px-4 py-2 relative shadow-sm rounded-xs"
-    >
-        
-        <h2
-            class="font-semibold text-sm text-gray-500 h-full absolute left-4 top-2"
-        >
-            LAYERS
+    <div class="flex flex-row items-end gap-4 mt-4">
+        <h2 class="text-lg font-semibold leading-none">
+            Statistics
         </h2>
+        <p class="text-xs font-light text-gray-700 leading-tight">
+            These numbers are just made up for now
+        </p>
+    </div>
+    <div
+        class="flex flex-row flex-wrap items-center justify-around gap-4"
+    >
+        <div class="flex flex-col items-center min-w-24 shrink-0">
+            <span class="text-4xl font-semibold text-center">
+                {data?.hits?.hits?.length ?? '-'}
+            </span>
+            <span class="text-lg text-gray-700 font-semibold text-center">
+                Datasets
+            </span>
+        </div>
+        <div class="flex flex-col items-center min-w-24 shrink-0">
+            <span class="text-4xl font-semibold text-center">
+                312
+            </span>
+            <span class="text-lg text-gray-700 font-semibold text-center">
+                Downloads
+            </span>
+        </div>
+        <div class="flex flex-col items-center min-w-24 shrink-0">
+            <span class="text-4xl font-semibold text-center">
+                21
+            </span>
+            <span class="text-lg text-gray-700 font-semibold text-center">
+                Contributors
+            </span>
+        </div>
+        <div class="flex flex-col items-center min-w-24 shrink-0">
+            <span class="text-4xl font-semibold text-center">
+                37.54
+            </span>
+            <span class="text-lg text-gray-700 font-semibold text-center">
+                Gigabytes
+            </span>
+        </div>
+    </div>
 
-        {#each layers as l}
-            <div
-                class="flex flex-col items-center"
+    <div class="flex flex-row items-end gap-4 mt-4">
+        <h2 class="text-lg font-semibold leading-none">
+            Data Dashboard
+        </h2>
+        <p class="text-xs font-light text-gray-700 leading-tight">
+            Explore featured datasets
+        </p>
+    </div>
+    <DataDashboard />
+
+    <div class="flex flex-row items-end gap-4 mt-4">
+        <h2 class="text-lg font-semibold leading-none">
+            Science Themes
+        </h2>
+        <p class="text-xs font-light text-gray-700 leading-tight">
+            Choose themes to filter available data products
+        </p>
+    </div>
+    <div
+        class="flex flex-row flex-wrap gap-4"
+    >
+        {#each scienceThemes as t, i}
+            <button
+                onclick={() => {
+                    if (selectedThemes.includes(t.name)) {
+                        selectedThemes = selectedThemes.filter(x => x!==t.name)
+                    }
+                    else {
+                        selectedThemes = [...selectedThemes, t.name];
+                    }
+                }}
+                class="
+                    px-3 py-2 w-56 flex flex-row items-center gap-2
+                    border border-solid border-gray-400 rounded-md shadow
+                    cursor-pointer hover:ring-2 ring-blue-300 hover:border-blue-400
+                "
+                class:ring-blue-900={selectedThemes.includes(t.name)}
+                class:ring-2={selectedThemes.includes(t.name)}
+                class:border-transparent={selectedThemes.includes(t.name)}
             >
-                <Toggle label={l.name} bind:isOn={l.isOn} />
-            </div>
+                <div class="w-16 h-12 overflow-hidden rounded-xs shadow shrink-0">
+                    <enhanced:img
+                        src={themeImages[`/src/lib/img/bsecThemes/${t.img}`]}
+                        alt=""
+                        class="w-full h-full object-cover"
+                    />
+                </div>
+                <p
+                    class="text-sm font-semibold flex-1 text-start"
+                >
+                    {t.name}
+                </p>
+            </button>
         {/each}
+    </div>
 
+    <div
+        class="
+            flex flex-col gap-2 flex-1 shrink-0 min-w-96 mt-4
+        "
+    >
+        <div class="flex flex-row items-end gap-4">
+            <h2 class="text-lg font-semibold leading-none">
+                Data Products
+            </h2>
+            <p class="text-xs font-light text-gray-700 leading-tight">
+                Showing {filteredData.length ?? 0} of {data?.hits?.hits?.length ?? 0} datasets
+            </p>
+        </div>
+        <div
+            class="flex flex-col gap-2 min-h-96"
+        >
+            {#each filteredData ?? [] as d, i}
+                <a
+                    target="_blank"
+                    href={d.links.latest_html}
+                    class="
+                        w-full border-b border-solid border-gray-500
+                        flex flex-col py-8 px-2
+                        hover:bg-blue-500/10
+                    "
+                >
+                    <div
+                        class="flex flex-row gap-4 mb-2"
+                    >
+                        <div
+                            class="px-2 py-1 text-white bg-blue-500 font-semibold text-xs rounded"
+                        >
+                            {d.ui.updated_date_l10n_long} ({d.ui.version})
+                        </div>
+                        <div
+                            class="px-2 py-1 text-white bg-gray-500 font-semibold text-xs rounded"
+                        >
+                            {d.ui.resource_type.title_l10n}
+                        </div>
+                        <div
+                            class="px-2 py-1 text-white bg-green-600 font-semibold text-xs rounded"
+                        >
+                            {d.ui.access_status.title_l10n}
+                        </div>
+                    </div>
+                    <p class="font-semibold text-lg text-link-blue">
+                        {d.metadata.title}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        {d.ui.creators?.creators?.reduce((p, c) => `${p}${p ? ', ' : ''}${c.person_or_org.name}`, '')}
+                    </p>
+                    <p class="text-base line-clamp-3 mt-2">
+                        {d.ui.description_stripped}
+                    </p>
+                    <div
+                        class="flex flex-row gap-2 my-2"
+                    >
+                        {#each [...d.metadata.msdlive_sectors?.map(t=>t.sector) ?? [], ...d.metadata.msdlive_projects?.map(t=>t.name) ?? []] as tag}
+                            <div
+                                class="px-2 py-1 text-gray-700 bg-gray-300 font-semibold text-xs rounded"
+                            >
+                                {tag}
+                            </div>
+                        {/each}
+                    </div>
+                    <p class="text-xs text-gray-500">
+                        Uploaded on {d.ui.created_date_l10n_long}
+                    </p>
+                </a>
+            {/each}
+        </div>
     </div>
 
 </div>

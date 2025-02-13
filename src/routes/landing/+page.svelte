@@ -98,7 +98,7 @@
 
     let hoveredData = $state();
 
-    let regionalPlanningDistrictsData;
+    let regionalPlanningDistrictsData = $state();
 
     $effect(() => {
         if (!regionalPlanningDistrictsData) {
