@@ -13,7 +13,7 @@
 
     const scienceThemes = [
         { name: 'Vegetation, Soils, and Ecosystems', img: 'theme0.jpg', },
-        { name: 'Greenhouse Gases', img: 'theme1.jpg', },
+        { name: 'Biogeochemistry', img: 'theme1.jpg', },
         // { name: 'Buildings and Energy', img: 'theme2.jpg', },
         { name: 'Meteorology', img: 'theme3.jpg', },
         { name: 'Water and Water Quality', img: 'theme6.jpg', },
