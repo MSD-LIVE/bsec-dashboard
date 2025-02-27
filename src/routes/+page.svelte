@@ -4,6 +4,7 @@
     import bsecLogo from "$lib/img/bsec-logo.png";
     import devDataRecords from "$lib/data/dev_only_records.json";
     import DataDashboard from "$lib/components/Dashboard.svelte";
+    import Statistics from "$lib/components/Statistics.svelte";
         
     const themeImages = import.meta.glob('$lib/img/bsecThemes/*.{jpg,jpeg,png}', {
         query: { enhanced: true, w: '100' },
@@ -35,6 +36,30 @@
     let filteredData = $derived(data?.hits?.hits?.filter(
         d => selectedThemes.length===0 ? true : d?.metadata?.msdlive_themes?.some(t => selectedThemes.includes(t.theme))
     ) ?? []);
+
+
+    let featuredData = $derived(
+        filteredData
+            ? [
+                ...filteredData.filter(d => d?.metadata?.title === 'Weather Data from BSEC Weather Stations').map(d => ({
+                    ...d,
+                    metadata: {
+                        title: 'BSEC Weather Station Data'
+                    },
+                    icon: 'carbon:weather-station',
+                })),
+                {
+                    metadata: {
+                        title: 'BSEC Air Quality Data'
+                    },
+                    links: {
+                        latest_html: ''
+                    },
+                    icon: 'mdi:air-filter',
+                }
+              ]
+            : []
+    );
     
 </script>
 
@@ -62,48 +87,61 @@
         The Baltimore Social-Environmental Collaborative (BSEC) is a Department of Energy Urban Integrated Field Lab program designed to generate the science needed for informed energy investments and extreme weather resilience in Baltimore. In doing so, BSEC contributes to action plans for Baltimore that improve the well-being of residents across the region. Working with businesses, local and state government representatives, and community organizations, BSEC scientists produce the decision-relevant science needed to address local priorities and needs. As data is gathered and findings discovered, the work evolves to answer questions our partners identify.
     </p>
 
-    <div class="flex flex-row items-end gap-4 mt-4">
-        <h2 class="text-lg font-semibold leading-none">
-            Statistics
-        </h2>
-        <p class="text-xs font-light text-gray-700 leading-tight">
-            These numbers are just made up for now
-        </p>
-    </div>
-    <div
-        class="flex flex-row flex-wrap items-center justify-around gap-4"
-    >
-        <div class="flex flex-col items-center min-w-24 shrink-0">
-            <span class="text-4xl font-semibold text-center">
-                {data?.hits?.hits?.length ?? '-'}
-            </span>
-            <span class="text-lg text-gray-700 font-semibold text-center">
-                Datasets
-            </span>
+    <div class="flex flex-row flex-wrap min-w-96 gap-4">
+        <div class="flex flex-col flex-1 gap-4">
+            <div class="flex flex-row items-end gap-4 mt-2">
+                <h2 class="text-lg font-semibold leading-none">
+                    Featured Datasets
+                </h2>
+            </div>
+            <div class="flex flex-col gap-4">
+                {#each featuredData as d}
+                    <a
+                        href={d.links.latest_html}
+                        class="
+                            flex flex-row gap-2 items-center w-96 pr-2 rounded border border-solid border-gray-700
+                            group
+                        "
+                        target=_blank
+                        rel=noreferrer
+                    >
+                        <div class="p-2 bg-link-blue border-r border-r-gray-700">
+                            <Icon
+                                icon={d.icon}
+                                class="text-2xl text-white"
+                            />
+                        </div>
+                        <p class="text-link-blue font-semibold text-base line-clamp-1 group-hover:underline group-hover:underline-offset-2">
+                            {d.metadata.title}
+                        </p>
+                        <Icon
+                            icon='mdi:external-link'
+                            class="text-lg text-link-blue ml-auto"
+                        />
+                    </a>
+                {/each}
+            </div>
         </div>
-        <div class="flex flex-col items-center min-w-24 shrink-0">
-            <span class="text-4xl font-semibold text-center">
-                312
-            </span>
-            <span class="text-lg text-gray-700 font-semibold text-center">
-                Downloads
-            </span>
-        </div>
-        <div class="flex flex-col items-center min-w-24 shrink-0">
-            <span class="text-4xl font-semibold text-center">
-                21
-            </span>
-            <span class="text-lg text-gray-700 font-semibold text-center">
-                Contributors
-            </span>
-        </div>
-        <div class="flex flex-col items-center min-w-24 shrink-0">
-            <span class="text-4xl font-semibold text-center">
-                37.54
-            </span>
-            <span class="text-lg text-gray-700 font-semibold text-center">
-                Gigabytes
-            </span>
+        <div class="flex flex-col flex-1 gap-2">
+            <div class="flex flex-row items-end gap-4 mt-4">
+                <h2 class="text-lg font-semibold leading-none">
+                    Additional Resources
+                </h2>
+            </div>
+            <div class="flex flex-col gap-1">
+                <p class="flex flex-row items-center gap-1 whitespace-nowrap"><Icon icon="tabler:point" class="inline text-sm"/> <a
+                    href="https://bsec.21cc.jhu.edu/"
+                    class="text-link-blue hover:text-blue-900 underline underline-offset-2"
+                    target="_blank"
+                >BSEC Homepage</a> - Follow for news and updates from the BSEC team!
+                </p>
+                <p class="flex flex-row items-center gap-1 whitespace-nowrap"><Icon icon="tabler:point" class="inline text-sm"/> <a
+                    href="https://www.arm.gov/"
+                    class="text-link-blue hover:text-blue-900 underline underline-offset-2"
+                    target="_blank"
+                >ARM</a> - Atmospheric Radiation Measurement User Facility
+                </p>
+            </div>
         </div>
     </div>
 
@@ -116,6 +154,8 @@
         </p>
     </div>
     <DataDashboard />
+
+    <Statistics />
 
     <div class="flex flex-row items-end gap-4 mt-4">
         <h2 class="text-lg font-semibold leading-none">
@@ -139,13 +179,10 @@
                     }
                 }}
                 class="
-                    px-3 py-2 w-56 flex flex-row items-center gap-2
+                    px-3 py-2 w-72 flex flex-row items-center gap-2
                     border border-solid border-gray-400 rounded-md shadow
                     cursor-pointer hover:ring-2 ring-blue-300 hover:border-blue-400
                 "
-                class:ring-blue-900={selectedThemes.includes(t.name)}
-                class:ring-2={selectedThemes.includes(t.name)}
-                class:border-transparent={selectedThemes.includes(t.name)}
             >
                 <div class="w-16 h-12 overflow-hidden rounded-xs shadow shrink-0">
                     <enhanced:img
@@ -159,6 +196,20 @@
                 >
                     {t.name}
                 </p>
+                <div
+                    class="
+                        rounded-full w-9 h-9 border  flex items-center justify-center transition-colors duration-300
+                        {selectedThemes.includes(t.name) ? 'border-green-600' : 'border-gray-300'}
+                    "
+                >
+                    <Icon
+                        icon='uit:check'
+                        class="
+                            text-4xl transition-colors duration-300
+                            {selectedThemes.includes(t.name) ? 'text-green-600' : 'text-white'}
+                        "
+                    />
+                </div>
             </button>
         {/each}
     </div>
