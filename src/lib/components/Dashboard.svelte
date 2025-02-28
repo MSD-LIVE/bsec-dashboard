@@ -116,6 +116,7 @@
         zoom={11}
         class="flex-1 h-[32rem] shadow-sm rounded-xs overflow-hidden min-w-96 shrink-0"
         standardControls
+        cooperativeGestures
         style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
     >
         {#if activeTab===tabs[0]}
