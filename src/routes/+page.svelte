@@ -1,5 +1,6 @@
 <script>
     import Icon from "@iconify/svelte";
+    import MultiSelect from 'svelte-multiselect';
     import { base } from '$app/paths';
     import bsecLogo from "$lib/img/bsec-logo.png";
     import devDataRecords from "$lib/data/dev_only_records.json";
@@ -14,13 +15,13 @@
     });
 
     const scienceThemes = [
-        { name: 'Vegetation, Soils, and Ecosystems', img: 'theme0.jpg', },
-        { name: 'Biogeochemistry', img: 'theme1.jpg', },
-        // { name: 'Buildings and Energy', img: 'theme2.jpg', },
-        { name: 'Meteorology', img: 'theme3.jpg', },
-        { name: 'Water and Water Quality', img: 'theme6.jpg', },
-        // { name: 'Health', img: 'theme8.jpg', },
-        // { name: 'Air Quality', img: 'theme9.jpg', },
+        // { label: 'Air Quality', img: 'theme9.jpg', },
+        { label: 'Biogeochemistry', img: 'theme1.jpg', },
+        // { label: 'Buildings and Energy', img: 'theme2.jpg', },
+        // { label: 'Health', img: 'theme8.jpg', },
+        { label: 'Meteorology', img: 'theme3.jpg', },
+        { label: 'Vegetation, Soils, and Ecosystems', img: 'theme0.jpg', },
+        { label: 'Water and Water Quality', img: 'theme6.jpg', },
     ];
 
     const featuredData = [
@@ -79,7 +80,7 @@
     });
 
     let filteredData = $derived(data?.hits?.hits?.filter(
-        d => selectedThemes.length===0 ? true : d?.metadata?.msdlive_themes?.some(t => selectedThemes.includes(t.theme))
+        d => selectedThemes.length===0 ? true : d?.metadata?.msdlive_themes?.some(t => selectedThemes.map(t => t.label).includes(t.theme))
     ) ?? []);
 
     let sortedData = $derived(sortDescending ? filteredData.slice().sort(sortTypes[sortType].sort) : filteredData.slice().sort(sortTypes[sortType].sort).reverse());
@@ -87,7 +88,7 @@
 </script>
 
 <div
-    class="w-full flex flex-col gap-4 px-16 pb-4"
+    class="w-full flex flex-col gap-4 px-8 lg:px-16 pb-4"
 >
 
     <div
@@ -154,89 +155,90 @@
         </div>
 
         <div class="flex flex-col gap-4 min-w-96 flex-1 items-start lg:items-center">
-            <div class="flex flex-col gap-4">
-                <div class="flex flex-row items-end gap-4 mt-2">
+
+            <div class="flex flex-col gap-4 min-w-96">
+                <div class="flex flex-row items-end gap-4 mt-4">
                     <h2 class="text-lg font-semibold leading-none">
-                        Featured Datasets
+                        Highlights
                     </h2>
                 </div>
-                <div class="flex flex-col gap-4">
-                    {#each featuredData as d}
-                        <a
-                            href={d.url}
-                            class="
-                                flex flex-row gap-2 items-center w-96 pr-2 rounded border border-solid border-gray-700
-                                group cursor-pointer overflow-hidden
-                                translate-0 hover:-translate-0.5
-                                transition-transform hover:shadow-sm
-                            "
-                            target=_blank
-                            rel=noreferrer
-                        >
-                            <div class="w-32 h-20 shrink-0 overflow-hidden bg-link-blue border-r border-r-gray-700">
-                                <img
-                                    src={d.img}
-                                    alt=""
-                                    class="w-full h-full object-cover"
-                                />
-                            </div>
-                            <div class="flex flex-col items-start justify-start h-20 flex-1">
-                                <h5
-                                    class="
-                                        text-link-blue w-full font-semibold text-base
-                                        group-hover:underline group-hover:underline-offset-2
-                                    "
-                                >
-                                    {d.title} <Icon icon="mdi:external-link" class="inline-block mb-0.5 text-white group-hover:text-link-blue" />
-                                </h5>
-                                <p
-                                    class="
-                                        text-xs text-black line-clamp-3
-                                    "
-                                >
-                                    {d.summary}
-                                </p>
-                            </div>
-                        </a>
-                    {/each}
+                <div class="px-6 pt-4 pb-5 rounded-lg shadow bg-gray-100">
+                    <div
+                        class="flex flex-row justify-around gap-4"
+                    >
+                        <div class="flex flex-col items-center w-24 shrink-0">
+                            <span class="text-2xl font-semibold text-center">
+                                17
+                            </span>
+                            <span class="text-base text-gray-700 font-semibold text-center">
+                                Datasets
+                            </span>
+                        </div>
+                        <div class="flex flex-col items-center w-24 shrink-0">
+                            <span class="text-2xl font-semibold text-center">
+                                312
+                            </span>
+                            <span class="text-base text-gray-700 font-semibold text-center">
+                                Downloads
+                            </span>
+                        </div>
+                        <div class="flex flex-col items-center w-24 shrink-0">
+                            <span class="text-2xl font-semibold text-center">
+                                37.54
+                            </span>
+                            <span class="text-base text-gray-700 font-semibold text-center">
+                                Gigabytes
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex flex-row items-end gap-4 mt-5 mb-4">
+                        <h3 class="text-base font-semibold leading-none">
+                            Featured Datasets
+                        </h3>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        {#each featuredData as d}
+                            <a
+                                href={d.url}
+                                class="
+                                    flex flex-row gap-2 items-center w-96 pr-2 rounded border border-solid border-gray-700
+                                    group cursor-pointer overflow-hidden
+                                    translate-0 hover:-translate-0.5
+                                    transition-transform hover:shadow-sm
+                                "
+                                target=_blank
+                                rel=noreferrer
+                            >
+                                <div class="w-32 h-20 shrink-0 overflow-hidden bg-link-blue border-r border-r-gray-700">
+                                    <img
+                                        src={d.img}
+                                        alt=""
+                                        class="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div class="flex flex-col items-start justify-start h-20 flex-1">
+                                    <h5
+                                        class="
+                                            text-link-blue w-full font-semibold text-base
+                                            group-hover:underline group-hover:underline-offset-2
+                                        "
+                                    >
+                                        {d.title} <Icon icon="mdi:external-link" class="inline-block mb-0.5 text-white group-hover:text-link-blue" />
+                                    </h5>
+                                    <p
+                                        class="
+                                            text-xs text-black line-clamp-3
+                                        "
+                                    >
+                                        {d.summary}
+                                    </p>
+                                </div>
+                            </a>
+                        {/each}
+                    </div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-2 min-w-96">
-                <div class="flex flex-row items-end gap-4 mt-4">
-                    <h2 class="text-lg font-semibold leading-none">
-                        Statistics
-                    </h2>
-                </div>
-                <div
-                    class="flex flex-row flex-wrap gap-4"
-                >
-                    <div class="flex flex-col items-center w-24 shrink-0">
-                        <span class="text-2xl font-semibold text-center">
-                            17
-                        </span>
-                        <span class="text-base text-gray-700 font-semibold text-center">
-                            Datasets
-                        </span>
-                    </div>
-                    <div class="flex flex-col items-center w-24 shrink-0">
-                        <span class="text-2xl font-semibold text-center">
-                            312
-                        </span>
-                        <span class="text-base text-gray-700 font-semibold text-center">
-                            Downloads
-                        </span>
-                    </div>
-                    <div class="flex flex-col items-center w-24 shrink-0">
-                        <span class="text-2xl font-semibold text-center">
-                            37.54
-                        </span>
-                        <span class="text-base text-gray-700 font-semibold text-center">
-                            Gigabytes
-                        </span>
-                    </div>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -260,55 +262,31 @@
             <h2 class="text-lg font-semibold leading-none">
                 Data Products
             </h2>
-            <h3 class="xl:ml-2 text-xs font-light xl:font-semibold xl:uppercase text-gray-700 leading-tight mr-1">
-                Sort by:
-            </h3>
-            <div
-                class="flex flex-row flex-wrap gap-4"
-            >
-                {#each sortTypes as s, i}
-                    <button
-                        onclick={() => setSort(i)}
-                        class="
-                            uppercase flex flex-row items-center text-xs font-light leading-tight 
-                            text-link-blue cursor-pointer hover:underline hover:underline-offset-2
-                        "
-                    >
-                        {s.name}
-                        <Icon
-                            icon={sortDescending ? 'solar:arrow-down-linear' : 'solar:arrow-up-linear'}
-                            class={i===sortType ? 'text-link-blue' : 'text-white'}
-                        />
-                    </button>
-                {/each}
-            </div>
         </div>
-        <div class="p-2 flex flex-col xl:flex-row xl:flex-wrap items-start xl:items-center gap-x-5 gap-y-2">
-            <h3 class="text-xs uppercase xl:w-48 xl:text-end shrink-0 font-semibold text-gray-700 leading-none">
-                Filter by Science Theme:
-            </h3>
-            <div
-                class="flex flex-row flex-wrap gap-4"
-            >
-                {#each scienceThemes as t, i}
-                    <button
-                        onclick={() => {
-                            if (selectedThemes.includes(t.name)) {
-                                selectedThemes = selectedThemes.filter(x => x!==t.name)
-                            }
-                            else {
-                                selectedThemes = [...selectedThemes, t.name];
-                            }
-                        }}
-                        class="
-                            p-1 w-56 flex flex-row items-center gap-2
-                            border border-solid border-gray-400 rounded-md shadow
-                            cursor-pointer hover:ring-2 ring-blue-300 hover:border-blue-400
-                        "
+        <div class="p-2 flex flex-col md:flex-row md:items-end gap-4">
+            <div class="flex flex-col md:flex-row md:items-end gap-x-5 gap-y-2 flex-1">
+                <h3 class="text-xs uppercase shrink-0 font-semibold text-gray-700">
+                    Filter by Science Theme:
+                </h3>
+                <MultiSelect
+                    bind:selected={selectedThemes}
+                    options={scienceThemes}
+                    closeDropdownOnSelect
+                    sortSelected
+                    --sms-max-width="24rem"
+                    --sms-width="100%"
+                    --sms-selected-bg="#1b75bb"
+                    --sms-selected-text-color="#ffffff"
+                >
+                    <div
+                        slot="option"
+                        class="p-1 w-full flex flex-row items-center gap-2"
+                        let:idx
+                        let:option
                     >
                         <div class="w-16 h-12 overflow-hidden rounded-sm shadow shrink-0">
                             <enhanced:img
-                                src={themeImages[`/src/lib/img/bsecThemes/${t.img}`]}
+                                src={themeImages[`/src/lib/img/bsecThemes/${option.img}`]}
                                 alt=""
                                 class="w-full h-full object-cover"
                             />
@@ -316,24 +294,34 @@
                         <p
                             class="text-xs font-semibold flex-1 text-start"
                         >
-                            {t.name}
+                            {option.label}
                         </p>
-                        <div
+                    </div>
+                </MultiSelect>
+            </div>
+            <div class="flex flex-row gap-4 shrink-0">
+                <h3 class="text-xs font-semibold uppercase text-gray-700">
+                    Sort by:
+                </h3>
+                <div
+                    class="flex flex-row flex-wrap gap-4"
+                >
+                    {#each sortTypes as s, i}
+                        <button
+                            onclick={() => setSort(i)}
                             class="
-                                rounded-full w-6 h-6 border  flex items-center justify-center transition-colors duration-300
-                                {selectedThemes.includes(t.name) ? 'border-green-600' : 'border-gray-300'}
+                                uppercase flex flex-row items-center text-xs font-light leading-tight 
+                                text-link-blue cursor-pointer hover:underline hover:underline-offset-2
                             "
                         >
+                            {s.name}
                             <Icon
-                                icon='uit:check'
-                                class="
-                                    text-4xl transition-colors duration-300
-                                    {selectedThemes.includes(t.name) ? 'text-green-600' : 'text-white'}
-                                "
+                                icon={sortDescending ? 'solar:arrow-down-linear' : 'solar:arrow-up-linear'}
+                                class={i===sortType ? 'text-link-blue' : 'text-white'}
                             />
-                        </div>
-                    </button>
-                {/each}
+                        </button>
+                    {/each}
+                </div>
             </div>
         </div>
         <div
