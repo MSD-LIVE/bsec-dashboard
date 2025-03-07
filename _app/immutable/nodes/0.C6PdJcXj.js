@@ -1,0 +1,8 @@
+import{t as c,a as v,s as f}from"../chunks/Bfk8aef0.js";import{s,i as L,k as a,l as t,w as D,t as u,g as x}from"../chunks/dRUbf9gC.js";import{s as I,e as h,a as S,i as g}from"../chunks/BxylZdyS.js";import"../chunks/DJa8dAfK.js";import"../chunks/z1Imw4pc.js";const N=!0,H=Object.freeze(Object.defineProperty({__proto__:null,prerender:N},Symbol.toStringTag,{value:"Module"})),O=""+new URL("../assets/MSD.LIVE.horiz.CEME90N3.svg",import.meta.url).href;var P=c('<a href=""> </a>'),R=c('<a href=""> </a>'),k=c(`<div class="
+        w-full flex flex-row items-center justify-center px-4 py-2 bg-rose-700 rounded-b-sm shadow-sm
+    "><span class="text-sm text-white">This is just a DEMO, meant to help generate ideas on what you actually want!</span></div> <div class="
+        w-full px-16 py-4 bg-white
+        flex flex-row items-center
+    "><div class="h-12 overflow-hidden"><img alt="MSDLIVE" class="h-full object-contain"></div> <div class="h-12 flex flex-row ml-auto items-center gap-8"><!> <a href="" class="px-4 py-1 bg-gray-300 rounded-sm shadow text-xs font-semibold">user@domain.org</a></div></div> <div class="
+        w-full bg-blue-900 text-white flex flex-row items-center px-16 py-5 gap-8
+    "></div> <!>`,1);function U(w,_){const b=["About","Events","Policies","Metrics","Acknowledgement"],y=["Data Repository","Computational Resources","Projects","Help"];var m=k(),r=s(L(m),2),o=a(r),j=a(o);I(j,"src",O),t(o);var p=s(o,2),E=a(p);h(E,17,()=>b,g,(l,n)=>{var e=P(),d=a(e,!0);t(e),u(()=>f(d,x(n))),v(l,e)}),D(2),t(p),t(r);var i=s(r,2);h(i,21,()=>y,g,(l,n)=>{var e=R(),d=a(e,!0);t(e),u(()=>f(d,x(n))),v(l,e)}),t(i);var M=s(i,2);S(M,()=>_.children),v(w,m)}export{U as component,H as universal};
