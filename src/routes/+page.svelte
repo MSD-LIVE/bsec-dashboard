@@ -143,10 +143,10 @@
                     <div class="flex flex-row gap-2">
                         <Icon icon="tabler:point" class="text-lg mt-1"/>
                         <p class=""><a
-                            href="https://www.arm.gov/"
+                            href="https://www.arm.gov/research/campaigns/amf2024courage"
                             class="text-link-blue hover:text-blue-900 underline underline-offset-2 whitespace-nowrap"
                             target="_blank"
-                        >ARM</a> - Atmospheric Radiation Measurement User Facility
+                        >CoURAGE</a> - Coast-Urban-Rural Atmospheric Gradient Experiment
                         </p>
                     </div>
                 </div>
@@ -248,7 +248,7 @@
             Data Dashboard
         </h2>
         <p class="text-xs font-light text-gray-700 leading-tight">
-            Explore featured datasets
+            Explore featured datasets ~ <span class="font-semibold text-black">Work in progress; ideas welcome!</span>
         </p>
     </div>
     <DataDashboard />
