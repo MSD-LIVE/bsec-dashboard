@@ -9,7 +9,7 @@
 
     import AVAILABLE_VARIABLES from "$lib/dataVariables";
 
-    const MAX_SELECTED = 5;
+    const MAX_SELECTED = 6;
 
     let selectedStations = $state([]);
 
