@@ -61,8 +61,8 @@
             const d = [];
             selectedStations.forEach((station) => {
                 d.push(
-                    asyncBufferFromUrl({ url: `${base}/data/${station}_5min_data.parquet` }).then(file => (
-                    // asyncBufferFromUrl({ url: `https://storage.googleapis.com/bsecdata/${station}_5min_data.parquet` }).then(file => (
+                    // asyncBufferFromUrl({ url: `${base}/data/${station}_5min_data.parquet` }).then(file => (
+                    asyncBufferFromUrl({ url: `https://storage.googleapis.com/bsecdata/${station}_5min_data.parquet` }).then(file => (
                         parquetQuery({
                             file,
                             compressors: { SNAPPY: snappyUncompressor() },
