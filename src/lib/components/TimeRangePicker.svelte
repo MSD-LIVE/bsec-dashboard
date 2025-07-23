@@ -24,7 +24,7 @@
                 todayBtn={false}
                 bind:value={startDate}
                 startDate="2023-01-01"
-                endDate="2024-12-31"
+                endDate="2025-12-31"
                 mode="date"
                 inputClasses="w-24 text-center cursor-pointer"
             />
@@ -44,7 +44,7 @@
                 todayBtn={false}
                 bind:value={endDate}
                 startDate="2023-01-01"
-                endDate="2024-12-31"
+                endDate="2025-12-31"
                 mode="date"
                 inputClasses="w-24 text-center cursor-pointer"
             />

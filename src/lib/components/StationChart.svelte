@@ -10,6 +10,7 @@
 
     import { base } from '$app/paths';
     import ChartDetail from "./ChartDetail.svelte";
+    import { COLORS } from "$lib/colors";
 
     const interval = d3.utcMinute.every(5);
 
@@ -60,8 +61,8 @@
             const d = [];
             selectedStations.forEach((station) => {
                 d.push(
-                    // asyncBufferFromUrl({ url: `${base}/data/${station}_5min_data.parquet` }).then(file => (
-                    asyncBufferFromUrl({ url: `https://storage.googleapis.com/bsecdata/${station}_5min_data.parquet` }).then(file => (
+                    asyncBufferFromUrl({ url: `${base}/data/${station}_5min_data.parquet` }).then(file => (
+                    // asyncBufferFromUrl({ url: `https://storage.googleapis.com/bsecdata/${station}_5min_data.parquet` }).then(file => (
                         parquetQuery({
                             file,
                             compressors: { SNAPPY: snappyUncompressor() },
@@ -85,7 +86,7 @@
     });
 
     $effect(() => {
-        if (data && (selectedVariables.length > 0) && chartWidth) {
+        if (data && (data.length > 0) && (selectedVariables.length > 0) && chartWidth) {
             if (selectedStations.length === 1) {
                 // need a y axis for each unit type in variables
                 const uniqueUnits = [...new Set(selectedVariables.map(v => v.units))];
@@ -123,7 +124,11 @@
                     marginLeft: 50,
                     x: { label: '', domain: [start, end], grid: true, labelArrow: 'none', type: 'time', },
                     y: { label: selectedVariables[0].units, grid: true, tickFormat: d3.format('~g') },
-                    color: { legend: true },
+                    color: {
+                        legend: true,
+                        domain: selectedStations,
+                        range: COLORS,
+                    },
                     marks: [
                         Plot.lineY(data, { x: 'obsTimeUtc', y: selectedVariables[0].variable, z: 'stationID', stroke: 'stationID', interval }),
                         Plot.ruleX(data, Plot.pointerX({ x: 'obsTimeUtc', py: selectedVariables[0].variable, stroke: '#911364' })),
@@ -156,12 +161,19 @@
         <Icon class="text-blue-600 mt-24" icon="line-md:downloading-loop" width=200 height=200 />
     {/if}
     <div bind:clientWidth={chartWidth} bind:this={chartDiv} role="img" class="w-full"></div>
-    {#if data}
+    {#if data && (data.length > 0)}
         <ChartDetail
             data={data}
             stations={selectedStations}
             timeslice={selectedTime}
             variables={selectedVariables}
         />
+    {/if}
+    {#if data && (data.length === 0)}
+        <span
+            class=""
+        >
+            No data available for the selected station(s) and date range.
+        </span>
     {/if}
 </div>

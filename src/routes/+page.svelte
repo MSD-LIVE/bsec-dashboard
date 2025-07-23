@@ -8,13 +8,14 @@
     import VariablePicker from "$lib/components/VariablePicker.svelte";
 
     import AVAILABLE_VARIABLES from "$lib/dataVariables";
+    import { COLOR_CLASSES } from "$lib/colors";
 
     const MAX_SELECTED = 6;
 
     let selectedStations = $state([]);
 
-    let startDate = $state('2024-10-01');
-    let   endDate = $state('2024-10-01');
+    let startDate = $state('2025-03-01');
+    let   endDate = $state('2025-03-01');
 
     let multiVariables = $state(['Temperature - Average', 'Precipitation - Total', 'Pressure - Maximum']);
     let singleVariable = $state(['Temperature - Average']);
@@ -97,8 +98,11 @@
                         SELECTED STATIONS:
                     </h3>
                     <div class="flex-1 flex flex-row flex-wrap gap-1">
-                        {#each selectedStations as s}
+                        {#each selectedStations as s, i}
                             <div class="px-2 py-1 rounded-lg bg-gray-200 shadow-sm flex flex-row items-center gap-1">
+                                <div
+                                    class="w-3 h-3 rounded-full border border-black {COLOR_CLASSES[i]}"
+                                ></div>
                                 <span class="text-black font-medium">
                                     {s}
                                 </span>
