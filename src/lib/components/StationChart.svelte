@@ -12,6 +12,13 @@
     import ChartDetail from "./ChartDetail.svelte";
     import { COLORS } from "$lib/colors";
 
+    import { dev } from '$app/environment';
+
+    const DATA_URL = dev
+        ? `${base}/data`
+        : `https://storage.googleapis.com/bsecdata`
+    ;
+
     const interval = d3.utcMinute.every(5);
 
     let {
@@ -62,8 +69,7 @@
             const d = [];
             selectedStations.forEach((station) => {
                 d.push(
-                    // asyncBufferFromUrl({ url: `${base}/data/${station}_5min_data.parquet` }).then(file => (
-                    asyncBufferFromUrl({ url: `https://storage.googleapis.com/bsecdata/${station}_5min_data.parquet` }).then(file => (
+                    asyncBufferFromUrl({ url: `${DATA_URL}/${station}_5min_data.parquet` }).then(file => (
                         parquetQuery({
                             file,
                             compressors: { SNAPPY: snappyUncompressor() },

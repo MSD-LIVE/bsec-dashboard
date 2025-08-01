@@ -7,7 +7,7 @@
 
     const MAP_STYLES = {
         "light": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-        "satellite": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard.json",
+        "satellite": `${base}/satellite.json`,
     }
 
     let {
