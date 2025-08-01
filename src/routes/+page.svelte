@@ -12,7 +12,10 @@
 
     const MAX_SELECTED = 6;
 
+    const SHOW_DEMO_MESSAGE = false;
+
     let selectedStations = $state([]);
+    let selectedStationsColorIndex = $state([]);
 
     let startDate = $state('2025-03-01');
     let   endDate = $state('2025-03-01');
@@ -24,11 +27,15 @@
 
     const toggleStation = (stationId) => {
         if (selectedStations.includes(stationId)) {
-            selectedStations = selectedStations.filter(s => s !== stationId)
+            const idx = selectedStations.findIndex(s => s === stationId);
+            selectedStations = selectedStations.filter(s => s !== stationId);
+            selectedStationsColorIndex = selectedStationsColorIndex.filter((_, i) => i !== idx);
         }
         else {
             if (selectedStations.length < MAX_SELECTED) {
-                selectedStations = [...selectedStations, stationId].sort();
+                selectedStations = [...selectedStations, stationId];
+                const nextIdx = Array(MAX_SELECTED).keys().find((_, i) => !selectedStationsColorIndex.includes(i))
+                selectedStationsColorIndex = [...selectedStationsColorIndex, nextIdx];
             }
             else {
                 errorMessage = `Please limit your selection to ${MAX_SELECTED} stations.`;
@@ -49,13 +56,15 @@
 <div
     class="w-full h-auto min-h-screen flex flex-col items-stretch"
 >
-    <div
-        class="w-full h-8 bg-rose-700 shadow flex items-center justify-center border-b border-b-black/5"
-    >
-        <p class="text-white text-sm">
-            This is a demo site under active development. Please excuse any bugs!
-        </p>
-    </div>
+    {#if SHOW_DEMO_MESSAGE}
+        <div
+            class="w-full h-8 bg-rose-700 shadow flex items-center justify-center border-b border-b-black/5"
+        >
+            <p class="text-white text-sm">
+                This is a demo site under active development. Please excuse any bugs!
+            </p>
+        </div>
+    {/if}
     <div
         class="
             w-full h-auto flex-1 flex flex-col lg:flex-row items-stretch flex-wrap
@@ -63,7 +72,8 @@
     >
         <div class="flex-1 w-full h-auto min-h-96 lg:min-h-[calc(100vh-2rem)] min-w-96 max-h-96 lg:max-h-none">
             <StationMap
-                bind:selectedStations
+                {selectedStations}
+                {selectedStationsColorIndex}
                 toggleStation={toggleStation}
             />
         </div>
@@ -101,7 +111,7 @@
                         {#each selectedStations as s, i}
                             <div class="px-2 py-1 rounded-lg bg-gray-200 shadow-sm flex flex-row items-center gap-1">
                                 <div
-                                    class="w-3 h-3 rounded-full border border-black {COLOR_CLASSES[i]}"
+                                    class="w-3 h-3 rounded-full border border-black {COLOR_CLASSES[selectedStationsColorIndex[i]]}"
                                 ></div>
                                 <span class="text-black font-medium">
                                     {s}
@@ -133,6 +143,7 @@
                     {startDate}
                     {endDate}
                     {selectedStations}
+                    {selectedStationsColorIndex}
                     {singleVariable}
                     {multiVariables}
                 />

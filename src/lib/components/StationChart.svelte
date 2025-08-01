@@ -17,6 +17,7 @@
     let {
         availableVariables = [],
         selectedStations = [],
+        selectedStationsColorIndex = [],
         singleVariable = [],
         multiVariables = [],
         startDate,
@@ -127,7 +128,7 @@
                     color: {
                         legend: true,
                         domain: selectedStations,
-                        range: COLORS,
+                        range: selectedStationsColorIndex.map(i => COLORS[i]),
                     },
                     marks: [
                         Plot.lineY(data, { x: 'obsTimeUtc', y: selectedVariables[0].variable, z: 'stationID', stroke: 'stationID', interval }),
