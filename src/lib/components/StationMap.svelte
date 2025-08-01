@@ -7,7 +7,7 @@
 
     const MAP_STYLES = {
         "light": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-        "satellite": "https://tiles.stadiamaps.com/styles/alidade_satellite.json",
+        "satellite": "https://geoserveis.icgc.cat/contextmaps/icgc_orto_estandard.json",
     }
 
     let {
