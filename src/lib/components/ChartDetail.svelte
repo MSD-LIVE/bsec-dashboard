@@ -26,11 +26,11 @@
 {#if (dataByStation && timeslice)}
     <div
         class="
-            flex flex-col w-full p-2 gap-2
+            flex flex-col w-full p-2 gap-1
             bg-gray-100 rounded-lg shadow-sm
         "
     >
-        <span class="mb-1 text-sm">
+        <span class="mb-1 text-xs">
             {timeslice.toLocaleString("en-US", {
                 weekday: 'long',
                 year: 'numeric',
@@ -44,14 +44,14 @@
         {#each stations as s}
             {#if dataByStation[s]}
                 <div
-                    class="flex flex-row px-2 gap-2 w-full"
+                    class="flex flex-row px-2 gap-1 w-full"
                 >
-                    <h4 class="w-12 font-semibold text-sm">
+                    <h4 class="w-12 font-semibold text-xs">
                         {s}
                     </h4>
-                    <div class="flex flex-col gap-2 w-full">
+                    <div class="flex flex-col gap-1 w-full">
                         {#each variables as v}
-                            <div class="flex flex-row px-2 text-sm gap-2">
+                            <div class="flex flex-row px-2 text-xs gap-2">
                                 <span class="w-24 text-end">
                                     {dataByStation[s][v.variable]} {v.units}
                                 </span>

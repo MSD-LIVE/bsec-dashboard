@@ -54,7 +54,7 @@
 </script>
 
 <div
-    class="w-full h-auto min-h-screen flex flex-col items-stretch"
+    class="w-full h-full min-h-[32rem] flex flex-col items-stretch"
 >
     {#if SHOW_DEMO_MESSAGE}
         <div
@@ -77,23 +77,7 @@
                 toggleStation={toggleStation}
             />
         </div>
-        <div class="lg:max-w-[50%] w-full min-w-96 h-auto lg:min-h-[calc(100vh-2rem)] lg:shadow z-10 px-3 py-4 gap-2 flex flex-col items-center">
-            <h2 class="text-xl font-medium">
-                BSEC Weather Station Dashboard
-            </h2>
-            <div
-                class="
-                    h-4 flex flex-row items-center text-sm 
-                    text-red-600 has-only:text-red-600/0
-                    transition-colors has-only:duration-[2s] has-only:delay-2000 ease-out
-                "
-            >
-                {#if errorMessage}
-                    <span class="">
-                        {errorMessage}
-                    </span>
-                {/if}
-            </div>
+        <div class="lg:max-w-[50%] w-full min-w-96 h-auto lg:min-h-[calc(100vh-2rem)] lg:shadow z-10 px-2 py-2 gap-2 flex flex-col items-center">
             {#if selectedStations.length === 0}
                 <div class="">
                     <span class="text-base">
@@ -113,7 +97,7 @@
                                 <div
                                     class="w-3 h-3 rounded-full border border-black {COLOR_CLASSES[selectedStationsColorIndex[i]]}"
                                 ></div>
-                                <span class="text-black font-medium">
+                                <span class="text-black text-xs font-medium">
                                     {s}
                                 </span>
                                 <button
@@ -138,6 +122,19 @@
                     bind:multiVariables
                     bind:singleVariable
                 />
+                <div
+                    class="
+                        h-4 flex flex-row items-center text-sm 
+                        text-red-600 has-only:text-red-600/0
+                        transition-colors has-only:duration-[2s] has-only:delay-2000 ease-out
+                    "
+                >
+                    {#if errorMessage}
+                        <span class="">
+                            {errorMessage}
+                        </span>
+                    {/if}
+                </div>
                 <StationChart
                     availableVariables={AVAILABLE_VARIABLES}
                     {startDate}

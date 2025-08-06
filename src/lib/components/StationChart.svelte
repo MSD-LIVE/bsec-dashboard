@@ -111,7 +111,7 @@
                 });
                 chart = Plot.plot({
                     width: chartWidth,
-                    height: 384,
+                    height: 300,
                     marginRight: 30 * axesScales.length,
                     x: { label: '', domain: [start, end], grid: true, labelArrow: 'none', type: 'time', },
                     y: { axis: 'left', label: selectedVariables[0].units, grid: true, tickFormat: d3.format('~g') },
@@ -127,7 +127,7 @@
             else if (selectedStations.length > 1) {
                 chart = Plot.plot({
                     width: chartWidth,
-                    height: 384,
+                    height: 300,
                     marginLeft: 50,
                     x: { label: '', domain: [start, end], grid: true, labelArrow: 'none', type: 'time', },
                     y: { label: selectedVariables[0].units, grid: true, tickFormat: d3.format('~g') },

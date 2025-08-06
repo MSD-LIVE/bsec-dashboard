@@ -20,7 +20,7 @@
         <h3 class="text-xs font-semibold text-gray-700 py-2 w-36 text-end">
             PLOT VARIABLE{multi ? 'S' : ''}:
         </h3>
-        <div class="md:min-w-72 max-w-[30rem]">
+        <div class="md:min-w-72 max-w-[30rem] text-xs">
             {#if multi}
                 <MultiSelect
                     bind:selected={multiVariables}

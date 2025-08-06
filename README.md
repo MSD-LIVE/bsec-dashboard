@@ -10,7 +10,7 @@ Ideally, the data could be served directly from GitHub Pages, but I've found tha
 
 ### Dev
 
-Run a local dev server with `npm run dev`. The dev server will serve the data from the local `static/data/` directory; the production code will serve from the GCP bucket.
+Install dependencies with `npm i`. Run a local dev server with `npm run dev`. The dev server will serve the data from the local `static/data/` directory; the production code will serve from the GCP bucket.
 
 ### Deployment
 
