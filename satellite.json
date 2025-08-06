@@ -1,0 +1,23 @@
+{
+    "version": 8,
+    "name": "satellite",
+    "metadata": {},
+    "sources": {
+        "satellite-source": {
+            "type": "raster",
+            "tiles": [
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png"
+            ],
+            "tileSize": 256
+        }
+    },
+    "layers": [
+        {
+            "id": "satellite-layer",
+            "source": "satellite-source",
+            "type": "raster"
+        }
+    ],
+    "id": "satellite",
+    "owner": "ArcGIS"
+}
